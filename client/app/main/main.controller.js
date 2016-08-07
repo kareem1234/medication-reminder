@@ -2,10 +2,14 @@
 
 angular.module('medicationReminderApp').controller('MainCtrl', function ($scope, $http, $window) {
 
-    var start = moment().format('MM/DD/YYYY'),
-        end = moment().add(1, 'day').format('MM/DD/YYYY');
+
+    this.missedMeds = [];
+    this.meds = null;
 
     this.getMeds = ()=>{
+    	var start = moment().format('MM/DD/YYYY'),
+        end = moment().add(1, 'day').format('MM/DD/YYYY');
+    	console.log('getting meds');
     	$http.get('/api/medications?start=' + start + '&end=' + end).then( (meds)=> {
 	    	console.log(meds);
 	    	meds.data.forEach((med)=>{
@@ -14,16 +18,33 @@ angular.module('medicationReminderApp').controller('MainCtrl', function ($scope,
 	    	})
 	        this.meds = meds.data;
 	        this.meds.sort((a,b)=>{
-	        	console.log(a.timeInt);
 	        	return a.timeInt - b.timeInt;
 	        });
     	});
     };
+    this._shouldTake = (med)=>{
+    	var isLess = (moment().add(5, 'minutes').unix() >= med.timeInt);
+    	var isGreater = (moment().subtract(5, 'minutes').unix() <= med.timeInt);
+    	return (isLess && isGreater);
+    }
+    this.checkMeds = ()=>{
+    	var newMeds = [];
+    	this.meds.forEach((med)=>{
+    		med.take = this._shouldTake(med);
+    		if(this._isMissed(med))
+    			this.missedMeds.push(med);
+    		else
+    			newMeds.push(med);
+    	});
+    	this.meds = newMeds;
+    }
+    this._isMissed = (med)=>{
+    	return (moment().unix() > moment(med.timeInt).unix());
+    }
 
-    $window.setInterval(function () {
-        $scope.currentTime = moment().format('MMMM Do YYYY, h:mm:ss a');
-        $scope.$apply();
-    }, 1000);
+    $window.setInterval(()=>{
+        this.getMeds();
+    }, 1000*60);
     this.getMeds();
 
 });
