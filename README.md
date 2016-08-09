@@ -30,3 +30,10 @@ All missed medications will be displayed in a separate area of the screen.
 4. npm install
 5. bower install
 6. grunt serve
+7. 
+
+#### Implementation details
+1. All medications from past dates that were not explicity marked as taken are put into missed medications list
+2. Any medication that was missed recently will sound the alarm, i.e if application starts and a medication was missed 5 minutes ago
+3. At medication time , the required medication is marked with a purple border
+4. medications that are taken are never moved to the missed medications list, and are marked as taken
