@@ -4,6 +4,7 @@ angular.module('medicationReminderApp', [
   'ngCookies',
   'ngResource',
   'ngSanitize',
+  'ngAudio',
   'ui.router',
   'ui.bootstrap'
 ])

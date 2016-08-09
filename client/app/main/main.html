@@ -1,20 +1,39 @@
 <div ng-include="'components/navbar/navbar.html'"></div>
 
-
-<div ng-controller="MainCtrl as mainctrl" class="container">
+<div style="
+    height: 100%;" ng-controller="MainCtrl as mainctrl">
+<div id="mainDiv"  class="container">
   <div class="panelRow row">
     <div class="col-md-4 ">
         <calendar selected="day"></calendar>
     </div>
     <div id="medPanelDiv" class=" col-md-6 col-md-offset-2">
-          <div class="medPanel" ng-repeat="m in mainctrl.meds">
-              {{m.time}} {{m.name}} {{m.dosage}} </br>
-            <button type="button" class="completeBtn btn btn-info">Mark Complete</button>
+             <div ng-show="mainctrl.missedMeds.length === mainctrl.meds.length" class=" black medPanel" >
+             No medications left for this day
+           </br>
+           </div>
+          <div ng-class="{take: m.take}" ng-show="!m.missed" class="medPanel" ng-repeat="m in mainctrl.meds">
+          {{m.name}}</br>
+          ({{m.dosage}}) </br>
+          {{m.time}}  </br>
+          {{m.hasTaken ? "*TAKEN*" : ""}}  </br>
+
+            <button ng-click="mainctrl.take(m,$index)" type="button" ng-show="m.take" class="completeBtn btn btn-info">Mark Complete</button>
           </div>
+      </div>
   </div>
 </div>
+<div  class="missedPanelRow row">
+    <div ng-repeat="m in mainctrl.missedMeds" class="missedMedPanelDiv ">
+        Missed {{m.name}} </br>
+          ({{ m.dosage}}) </br> 
+          {{m.time}}  
+    </div>
+</div>
+</div>
+<!--
 <footer class="footer">
   <div >
       <p>© 2016 Mavencare™, made with <span class="glyphicon glyphicon-heart heart-red"></span> for better healthcare.</p>
   </div>
-</footer>
+</footer> -->
